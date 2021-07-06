@@ -8,10 +8,11 @@ using namespace std;
 Renderer::Renderer() : canvas(nullptr), viewPortRect(SDL_Rect{0, 0, 0, 0}), camera(), cameraMatrix(),
                        screenRect(SDL_Rect{0, 0, 0, 0}), projectionMatrix(), pixels(nullptr) {}
 
-void Renderer::prepare(SDL_Surface* canvas, SDL_Rect viewPortRect, Basis camera) {
+void Renderer::prepare(SDL_Surface* canvas, SDL_Renderer* sdlRenderer, SDL_Rect viewPortRect, Basis camera) {
     this->canvas = canvas;
     this->viewPortRect = viewPortRect;
     this->camera = camera;
+    this->sdlRenderer = sdlRenderer;
 
     // Transform any object in world space to camera space.
     // "camera space" is world space but with the camera at the origin.

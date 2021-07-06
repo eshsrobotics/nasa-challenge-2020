@@ -445,7 +445,7 @@ int main() {
                 menuView.draw(surf);
             } else if (currentView == 1) {
                 Renderer r;
-                r.prepare(surf, mainView.getRenderBoundary(), camera);
+                r.prepare(surf, renderer, mainView.getRenderBoundary(), camera);
                 mainView.drawWithRenderer(r);
 
             }

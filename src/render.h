@@ -8,12 +8,17 @@
 
 #include <iostream>
 
+// Makes sure that all of the drawing of the program happens in one spot. 
+// 
+// During each frame you must: 
+//  - Call prepare in order to calculate frame-invariant data
+//  - Call renderPoint or renderPolygon 
 class Renderer {
     public:
         Renderer();
 
         // This function is called at the beginning of the frame that you are rendering.
-        void prepare(SDL_Surface* canvas, SDL_Rect viewPortRect, Basis camera);
+        void prepare(SDL_Surface* canvas, SDL_Renderer* sdlRenderer, SDL_Rect viewPortRect, Basis camera);
 
         // This exposes our internal SDL_Surface so that other people can use it.
         SDL_Surface* getScreen() const;
@@ -128,6 +133,7 @@ class Renderer {
         SDL_Surface* canvas;
         SDL_Rect viewPortRect;
         Basis camera;
+        SDL_Renderer* sdlRenderer;
 
         Matrix cameraMatrix;
         SDL_Rect screenRect;
