@@ -10,7 +10,7 @@ using namespace std;
 
 ostream& operator<<(ostream& out, SDL_Color color) {
     out.fill('0');
-    out << "#" << hex << setw(2) << (int)color.r << setw(2) 
+    out << "#" << hex << setw(2) << (int)color.r << setw(2)
         << (int)color.g << setw(2) << (int)color.b << setw(2) << (int)color.a << dec;
     out.fill(' ');
     return out;

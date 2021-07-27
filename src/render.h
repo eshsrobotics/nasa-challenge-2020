@@ -7,12 +7,28 @@
 #include "polygon.h"
 
 #include <iostream>
+#include <unordered_map>
+#include <vector>
 
-// Makes sure that all of the drawing of the program happens in one spot. 
-// 
-// During each frame you must: 
+namespace std
+{
+    template<> struct hash<SDL_Color>
+    {
+        std::size_t operator() (const SDL_Color& color) const noexcept
+        {
+            int bits = ((color.r & 0xFF) << 24) |
+                       ((color.g & 0xFF) << 16) |
+                       ((color.b & 0xFF) << 8) |
+                        (color.a & 0xFF);
+            return std::hash<int>{}(bits);
+        }
+    };
+}
+// Makes sure that all of the drawing of the program happens in one spot.
+//
+// During each frame you must:
 //  - Call prepare in order to calculate frame-invariant data
-//  - Call renderPoint or renderPolygon 
+//  - Call renderPoint or renderPolygon
 class Renderer {
     public:
         Renderer();
@@ -28,6 +44,7 @@ class Renderer {
 
         template <typename ColorPointIterator>
         void renderPoint(ColorPointIterator begin, ColorPointIterator end) const {
+            std::unordered_map<SDL_Color, std::vector<SDL_FPoint>> pointBuckets(100);
             for (ColorPointIterator iter = begin; iter != end; ++iter) {
                 Point p = static_cast<Point>(*iter); // Making an explicit copy here
                 SDL_Color color = iter->color;
@@ -49,8 +66,19 @@ class Renderer {
                 // Render points that weren't skipped.
                 // Offset formula:
                 // width*y+x
-                unsigned int offset = canvas->w * static_cast<unsigned int>(p.y) + static_cast<unsigned int>(p.x);
-                pixels[offset] = SDL_MapRGBA(canvas->format, color.r, color.g, color.b, color.a);
+                if (pointBuckets.find(color) == pointBuckets.end()) {
+                    // No bucket for this color
+                    // ∴ Create the bucket
+                    pointBuckets[color] = std::vector<SDL_FPoint>();
+                }
+                pointBuckets[color].push_back({p.x, p.y});
+                // unsigned int offset = canvas->w * static_cast<unsigned int>(p.y) + static_cast<unsigned int>(p.x);
+                // pixels[offset] = SDL_MapRGBA(canvas->format, color.r, color.g, color.b, color.a);
+            }
+
+            for (auto iter = pointBuckets.begin(); iter != pointBuckets.end(); iter++) {
+                const SDL_FPoint* pointList = pointBuckets[iter->first].data();
+                SDL_RenderDrawPointsF(sdlRenderer, pointList, pointBuckets[iter->first].size());
             }
         }
 
