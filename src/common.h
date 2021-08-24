@@ -16,4 +16,7 @@ extern const double rad_to_deg;
 // Print an SDL color to the given output stream.
 std::ostream& operator<<(std::ostream& out, SDL_Color color);
 
+// Compare two SDL colors for total ordering. 
+bool operator<(SDL_Color color1, SDL_Color color2); 
+
 #endif // COMMON_H_INCLUDED

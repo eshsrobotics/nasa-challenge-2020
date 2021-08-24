@@ -16,3 +16,11 @@ ostream& operator<<(ostream& out, SDL_Color color) {
     return out;
 
 }
+
+bool operator<(SDL_Color color1, SDL_Color color2) {
+    if (color1.r < color2.r && color1.g < color2.g && color1.b < color2.b && color1.a < color2.a) {
+       return true; 
+    } else {
+        return false;
+    }
+}
